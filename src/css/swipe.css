@@ -1,0 +1,448 @@
+@import 'damion.css';
+@import 'montserrat.css';
+@import 'general.css';
+
+#swipe-main-container {
+    width: 1000px;
+    margin-left: calc((100% - 1000px) / 2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+#swipe-login-spotify {
+    width: 350px;
+    text-align: center;
+    font-size: 1.2em;
+    display: none;
+}
+
+#swipe-login-spotify button {
+    background-color: rgb(226, 126, 140);
+}
+
+#swipe-login-spotify button:hover {
+    background-color: rgb(212, 88, 105);
+}
+
+#swipe-cart-container {
+    background-color: rgba(255,255,255,0.8);
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid rgb(255,255,255);
+    box-shadow: 0px 0px 9px 0px rgba(187,187,187,0.75);
+    width: 350px;
+    margin: 20px 0;
+    display: block;
+}
+
+#swipe-cart-dislike {
+    background-image: url("../media/icons/close.svg"), linear-gradient(rgb(235, 1, 165), rgb(209, 54, 49));
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+    background-size: 50% auto, cover;
+}
+
+#swipe-cart-dislike:hover {
+    cursor: pointer;
+    background-image: url("../media/icons/close.svg"), linear-gradient(rgb(215, 1, 145), rgb(189, 34, 29));
+}
+
+#swipe-cart-like {
+    background-image: url("../media/icons/favorite.svg"), linear-gradient(rgb(49, 167, 138), rgb(49, 209, 174));
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+    background-size: 50% auto, cover;
+}
+
+#swipe-cart-like:hover {
+    background-image: url("../media/icons/favorite.svg"), linear-gradient(rgb(29, 147, 118), rgb(29, 189, 154));
+    cursor: pointer;
+}
+
+#swipe-cart-image-container {
+    width: 100%;
+    background-image: url("../media/icons/hourglass.svg"), linear-gradient(rgb(221, 221, 221), rgb(233, 233, 233));
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 10% auto, cover;
+    border-radius: 3px;
+    position: relative;
+}
+
+/*padding is always calculated by the parent width, thats why padding-bottom is 100%*/
+#swipe-cart-image-container:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+}
+
+#swipe-music-play-option {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    display: hidden;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 30% auto, cover;
+}
+
+#swipe-music-play-option:hover {
+    display: block;
+    background-image:url("../media/icons/play_circle_filled.svg"), linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+}
+
+#swipe-cart-title {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin: 5px 0;
+    white-space: nowrap; 
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#swipe-cart-artist {
+    font-size: 0.9em;
+    font-weight: 300;
+    margin: 5px 0;
+    white-space: nowrap; 
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#swipe-cart-button-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#swipe-account-icon {
+    background-image: url("../media/icons/account_circle.svg"), linear-gradient(rgb(255,255,255), rgb(255,255,255));
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 40px;
+    width: 40px;
+    border-radius: 20px;
+    background-size: 80% auto, cover;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    box-shadow: 0px 0px 9px 0px rgba(187,187,187,0.75);
+    cursor: pointer;
+}
+
+#swipe-account-icon:hover {
+    background-image: url("../media/icons/account_circle.svg"), linear-gradient(rgb(255,255,255), rgb(255,255,255));
+}
+
+#swipe-popup-settings-background {
+    background-color: rgba(245,245,245,0.9);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    /*display: flex;*/
+    justify-content: center;
+    flex-wrap: nowrap;
+    align-items: center;
+    display: none;
+    z-index: 1;
+    overflow-y: auto;
+}
+
+#swipe-popup-close {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    font-size: 35px;
+    color: rgb(80,80,80);
+    font-weight: bold;
+}
+
+#swipe-popup-close:hover {
+    cursor: pointer;
+    color: rgb(20,20,20);
+}
+
+#swipe-popup-title {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 5px;
+}
+
+.swipe-popup-subheading {
+    font-weight: 600;
+    font-size: 1em;
+}
+
+#swipe-popup-suggestions {
+    margin-top: 20px;
+}
+
+#swipe-popup-suggestions-options {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+#swipe-popup-settings-container {
+    background-color: rgb(255,255,255);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 9px 0px rgba(187,187,187,0.75);
+    width: 350px;
+    position: relative;
+    margin: 20px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px 7px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(240, 240, 240);
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+button:hover {
+    background-color: rgb(220, 220, 220);
+}
+
+#swipe-popup-settings-container hr {
+    border: none;
+    border-top: 1px solid rgb(180,180,180);
+    margin: 3px 0 8px 0;
+    width: 100%;
+}
+
+.swipe-popup-radio {
+    opacity: 0;
+    position: fixed;
+    width: 0;
+}
+
+.swipe-popup-label {
+    display: inline-block;
+    background-color: rgb(240,240,240);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.swipe-popup-label:hover {
+    background-color: rgb(220, 220, 220);
+}
+
+.swipe-popup-radio:checked + .swipe-popup-label {
+    background-color:rgb(238, 156, 167);
+}
+
+.swipe-popup-radio:checked + .swipe-popup-label:hover {
+    background-color:rgb(223, 124, 138);
+}
+
+#swipe-popup-delete {
+    margin-top: 20px;
+    background-color: rgb(219, 35, 59);
+}
+
+#swipe-popup-logout {
+    background-color: rgb(56, 230, 172);
+}
+
+#swipe-popup-delete:hover {
+    background-color: rgb(199, 15, 39);
+}
+
+#swipe-popup-autoplay {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.swipe-popup-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+.swipe-popup-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+  
+.swipe-popup-switch .swipe-popup-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(180,180,180);
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+  
+.swipe-popup-switch .swipe-popup-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: rgb(255,255,255);
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+  
+.swipe-popup-switch input:checked + .swipe-popup-slider {
+    background-color: rgb(238, 156, 167);
+}
+  
+.swipe-popup-switch input:focus + .swipe-popup-slider {
+    box-shadow: 0 0 1px rgb(238, 156, 167);
+}
+  
+.swipe-popup-switch input:checked + .swipe-popup-slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}  
+
+#swipe-popup-message {
+    color: rgb(31, 155, 114);
+    width: 100%;
+    text-align: center;
+    margin: 20px 0 0 0;
+    font-size: 0.9em;
+}
+
+@media screen and (max-width: 1000px) {
+    #swipe-main-container {
+      width: 100%;
+      margin-left: 0;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    #swipe-login-spotify {
+        width: calc(100% - 20px);
+        margin-left: 10px;
+    }
+
+    #swipe-cart-container {
+        width: calc(100% - 20px);
+        margin-left: 10px;
+    }
+
+    #swipe-popup-settings-container {
+        width: calc(100% - 20px);
+        margin-left: 10px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    #swipe-login-spotify button{
+        background-color: rgb(9, 79, 104);
+        color: rgb(255,255,255);
+    }
+
+    #swipe-login-spotify button:hover {
+        background-color: rgb(5, 64, 85);
+    }
+
+    #swipe-cart-container {
+        background-color: rgba(20,20,20,0.8);
+        border: 1px solid rgb(0,0,0);
+        box-shadow: 0px 0px 9px 0px rgba(0,0,0,0.75);
+    }
+
+    #swipe-cart-image-container {
+        background-image: url("../media/icons/hourglass_white.svg"), linear-gradient(rgb(21, 21, 21), rgb(33, 33, 33));
+    }
+
+    #swipe-music-play-option:hover {
+        background-image:url("../media/icons/play_circle_filled.svg"), linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+    }
+
+    #swipe-account-icon {
+        box-shadow: 0px 0px 9px 0px rgba(0,0,0,0.75);
+        background-image: url("../media/icons/account_circle_white.svg"), linear-gradient(rgb(21, 21, 21), rgb(33, 33, 33));
+    }
+    
+    #swipe-account-icon:hover {
+        background-image: url("../media/icons/account_circle_white.svg"), linear-gradient(rgb(21, 21, 21), rgb(33, 33, 33));
+    }
+
+    #swipe-popup-settings-background {
+        background-color: rgba(50,50,50,0.9);
+    }
+
+    #swipe-popup-close {
+        color: rgb(200,200,200);
+    }
+
+    #swipe-popup-close:hover {
+        color: rgb(220,220,220);
+    }
+
+    #swipe-popup-settings-container {
+        background-color: rgb(20,20,20);
+        box-shadow: 0px 0px 9px 0px rgba(0,0,0,0.75);
+    }
+
+    #swipe-popup-title, .swipe-popup-subheading {
+        color: rgb(255,255,255);
+    }
+
+    .swipe-popup-radio:checked + .swipe-popup-label {
+        background-color: rgb(19, 106, 138);
+        color: rgb(255,255,255);
+    }
+    
+    .swipe-popup-radio:checked + .swipe-popup-label:hover {
+        background-color: rgb(9, 86, 118);
+    }
+
+    .swipe-popup-switch input:checked + .swipe-popup-slider {
+        background-color: rgb(19, 106, 138);
+    }
+      
+    .swipe-popup-switch input:focus + .swipe-popup-slider {
+        box-shadow: 0 0 1px rgb(9, 86, 118);
+    }
+
+    #swipe-cart-title {
+        color: rgb(255,255,255);
+    }
+    
+    #swipe-cart-artist {
+        color: rgb(255,255,255);
+    }
+}
