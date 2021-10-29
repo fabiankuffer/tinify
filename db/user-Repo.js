@@ -8,18 +8,16 @@ class userRepo {
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         password_hash TEXT NOT NULL,
-        login_token TEXT UNIQUE,
-        salt TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE
         )`;
       return this.dao.run(sql);
     }
 
-    create(password_hash, salt, email, login_token) {
+    create(password_hash, email) {
         return this.dao.run(
-          `INSERT INTO users (password_hash, salt, email, login_token)
-            VALUES (?, ?, ?)`,
-          [password_hash, salt, email, login_token]);
+          `INSERT INTO users (password_hash, email)
+            VALUES (?, ?)`,
+          [password_hash, email]);
     }
 
     delete(id) {
@@ -39,12 +37,6 @@ class userRepo {
         return this.dao.get(
           `SELECT * FROM users WHERE email = ? AND password_hash = ?`,
           [mail, hash]);
-    }
-
-    getByLoginToken(login_token){
-        return this.dao.get(
-            `SELECT * FROM users WHERE login_token = ?`,
-            [login_token]);
     }
 }
   

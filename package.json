@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/fabiankuffer/tinify#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "bluebird": "^3.7.2",
     "express": "^4.17.1",
+    "express-session": "^1.17.2",
     "sqlite3": "^5.0.2"
   }
 }
