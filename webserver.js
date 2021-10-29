@@ -101,43 +101,105 @@ app.use("/media/icons", express.static(__dirname + '/src/media/icons'));
 //rest-api
 app.post("/login", function(req,res){
     //neccessary parameter: mail, password
-    //bcrypt.compare(password, hash, function(err, result) {});
-});
-app.post("/signup", function(req,res){
-    //neccessary parameter: mail, password
+    //login locked if more than 5 failed attempts in 5 minutes
     if(req.body.mail && req.body.password){
         const saltRounds = 10;
-
-        bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
-            if(err){
+        userTable.getByMail(req.body.mail).then(
+            function(data){
+                if(data){
+                    loginattemptTable.getCountYoungerThan(data.id,Date.now()-300000).then(
+                        function(dataattempts){
+                            if(dataattempts.count > 5){
+                                res.status(403).json({"message":"to many failed attempts"});
+                                loginattemptTable.deleteOlderThan(data.id,Date.now()-300000); //5min
+                            } else {
+                                bcrypt.compare(req.body.password, data.password_hash, function(err, result) {
+                                    if(err){
+                                        res.status(500).json({"message":"internal error"});
+                                    } else {
+                                        if(result){
+                                            req.session.loggedIn = true;
+                                            req.session.user_id = data.id;
+                                            res.status(200).json({"message":"login authorized"});
+                                            loginattemptTable.deleteOlderThan(data.id,Date.now());
+                                        } else {
+                                            res.status(401).json({"message":"wrong credentials"});
+                                            loginattemptTable.create(data.id,Date.now());
+                                        }
+                                    }
+                                });
+                            }
+                        },
+                        function(){
+                            res.status(500).json({"message":"internal error"});
+                        }
+                    );
+                } else {
+                    res.status(401).json({"message":"wrong credentials"});
+                }
+            },
+            function(data){
                 res.status(500).json({"message":"internal error"});
-            } else {
-                userTable.create(hash, req.body.mail).then(
-                    function(data){
-                        req.session.loggedIn = true;
-                        req.session.user_id = data.id;
-                        res.status(200).json({"message":"User created"});
-                    },
-                    function(data){
-                        res.status(500).json({"message":"internal error"});
-                    }
-                );
             }
-        });
+        );
     } else {
         res.status(400).json({"message":"wrong parameters"});
     }
 });
 
+
+app.post("/signup", function(req,res){
+    //neccessary parameter: mail, password
+    //password min length is 4 chars
+    if(req.body.mail && req.body.password){
+
+        const saltRounds = 10;
+        const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+        if(emailRegexp.test(req.body.mail)){
+            if(req.body.password.length > 4){
+                bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+                    if(err){
+                        res.status(500).json({"message":"internal error"});
+                    } else {
+                        userTable.create(hash, req.body.mail).then(
+                            function(data){
+                                req.session.loggedIn = true;
+                                req.session.user_id = data.id;
+                                res.status(200).json({"message":"User created"});
+                            },
+                            function(data){
+                                res.status(500).json({"message":"internal error"});
+                            }
+                        );
+                    }
+                });
+            } else {
+                res.status(400).json({"message":"password to short"});
+            } 
+        } else {
+            res.status(400).json({"message":"no valid email-address"});
+        }
+    } else {
+        res.status(400).json({"message":"wrong parameters"});
+    }
+});
+
+app.post("/logout", function(req,res){
+    req.session.destroy((err)=>{
+        res.status(500).json({"message":"internal error"});
+    });
+    res.status(200).json({"message":"successful logout"});
+});
+
 app.post("/dislike/:id", function(req,res){});
 app.post("/like/:id", function(req, res){});
 app.post("/delete", function(req,res){});
-app.post("/logout", function(req,res){
-    req.session.destroy((err)=>{});
-    res.redirect("/");
-});
+app.get("/new/accesstoken", function(req,res){});
+app.post("/set/refreshtoken", function(req,res){});
 app.put("/setting", function(req, res){});
 app.get("/setting", function(req, res){});
+app.put("r/eset/stats", function(req,res){});
 
 //webserver start
 const PORT = process.env.PORT || 3000;

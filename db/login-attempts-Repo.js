@@ -36,8 +36,8 @@ class loginattemptRepo {
     }
 
     getCountYoungerThan(id, timestamp) {
-        return this.dao.all(
-         `SELECT COUNT(*) FROM loginattempt WHERE user_id = ? AND timestamp > ?`,
+        return this.dao.get(
+         `SELECT COUNT(*) AS count FROM loginattempt WHERE user_id = ? AND timestamp > ?`,
          [id, timestamp]);
     }
 }
