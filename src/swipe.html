@@ -7,12 +7,13 @@
         <link rel="icon" type="image/png" sizes="32x32" href="media/favicon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="media/favicon/favicon-16x16.png">
         <script src="js/swipe.js"></script>
+        <script src="js/popup.js"></script>
         <link rel="stylesheet" href="css/swipe.css">
     </head>
     <body>
-        <div id="swipe-popup-settings-background">
+        <div id="swipe-popup-settings-background" class="popup-background">
             <div id="swipe-popup-settings-container">
-                <span id="swipe-popup-close">&times;</span>
+                <span id="swipe-popup-close" class="popup-close">&times;</span>
                 <div id="swipe-popup-title">Settings</div>
                 <button id="swipe-popup-logout">Logout from Tinify</button>
                 <div class="swipe-popup-subheading" id="swipe-popup-suggestions">Suggestions:</div>
@@ -32,7 +33,7 @@
             </div>
         </div>
         <div id="swipe-main-container">
-            <div id="swipe-account-icon"></div>
+            <div id="swipe-account-icon" class="popup-open"></div>
             <div id="swipe-login-spotify">
                 You need to sign in to Spotify to access music and to add music you like to the Tinity playlist.
                 <button>Sign-In Spotify</button>

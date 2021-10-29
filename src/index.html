@@ -7,12 +7,13 @@
         <link rel="icon" type="image/png" sizes="32x32" href="media/favicon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="media/favicon/favicon-16x16.png">
         <script src="js/login.js"></script>
+        <script src="js/popup.js"></script>
         <link rel="stylesheet" href="css/login.css">
     </head>
     <body>
-        <div id="login-popup-sign-in-background">
+        <div id="login-popup-sign-in-background" class="popup-background">
             <div id="login-popup-sign-in-container">
-                <span id="login-popup-close">&times;</span>
+                <span id="login-popup-close" class="popup-close">&times;</span>
                 <div id="login-popup-title">Sign Up</div>
                 <input type="email" placeholder="Email">
                 <input type="password" placeholder="Password">
@@ -37,7 +38,7 @@
                     <button>Log in</button>
                     <div id="login-form-error-message">Wrong email or password</div>
                     <hr>
-                    <button>Create New Account</button>
+                    <button class="popup-open">Create New Account</button>
                 </div>
             </div>
         </div>
