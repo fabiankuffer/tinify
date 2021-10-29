@@ -1,0 +1,24 @@
+{
+  "name": "tinify",
+  "version": "1.0.0",
+  "description": "like tinder, but for music on spotify",
+  "main": "webserver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabiankuffer/tinify.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fabiankuffer/tinify/issues"
+  },
+  "homepage": "https://github.com/fabiankuffer/tinify#readme",
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "express": "^4.17.1",
+    "sqlite3": "^5.0.2"
+  }
+}
