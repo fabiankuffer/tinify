@@ -187,9 +187,12 @@ app.post("/signup", function(req,res){
 
 app.post("/logout", function(req,res){
     req.session.destroy((err)=>{
-        res.status(500).json({"message":"internal error"});
+        if(err){
+            res.status(500).json({"message":"internal error"});
+        } else {
+            res.status(200).json({"message":"successful logout"});
+        }
     });
-    res.status(200).json({"message":"successful logout"});
 });
 
 app.post("/dislike/:id", function(req,res){});
@@ -199,7 +202,7 @@ app.get("/new/accesstoken", function(req,res){});
 app.post("/set/refreshtoken", function(req,res){});
 app.put("/setting", function(req, res){});
 app.get("/setting", function(req, res){});
-app.put("r/eset/stats", function(req,res){});
+app.put("/reset/stats", function(req,res){});
 
 //webserver start
 const PORT = process.env.PORT || 3000;
