@@ -8,6 +8,7 @@ const refreshRepo = require('./db/refresh-Repo');
 const userRepo = require('./db/user-Repo');
 const session = require('express-session');
 const bcrypt = require ('bcrypt');
+const https = require('https');
 
 //objects for the db
 const dao = new AppDAO('./db/tinify.db');
@@ -47,6 +48,7 @@ userTable.createTable()
 //main file
 app.get('/', function (req, res){
     if(req.session.loggedIn){
+        req.session.touch();
         res.redirect("/swipe");
     } else {
         res.sendFile("index.html", {root: __dirname + "/src"}, function (err) {
@@ -58,6 +60,7 @@ app.get('/', function (req, res){
 //swipe file
 app.get('/swipe', function (req, res){
     if(req.session.loggedIn){
+        req.session.touch();
         res.sendFile("swipe.html", {root: __dirname + "/src"}, function (err) {
             if (err) {res.send(err);}
         });
@@ -195,11 +198,92 @@ app.post("/logout", function(req,res){
     });
 });
 
+app.post("/user/connected", function(req,res){
+    //only session cookie is neccessary
+    if(req.session.loggedIn){
+        refreshTable.getByUser(req.session.user_id).then(
+            function(data){
+                if(data){
+                    res.status(200).json({"connected":true});
+                } else {
+                    const PORT = process.env.PORT || 3000;
+                    const CLIENTID = process.env.CLIENTID;
+                    const DOMAIN = process.env.DOMAIN || "localhost";
+                    const PROTOCOL = process.env.PROTOCOL || "http";
+                    res.status(200).json({"connected":false,"link":"https://accounts.spotify.com/authorize?response_type=code&client_id="+CLIENTID+"&scope=playlist-modify-private%20playlist-read-private%20user-top-read&redirect_uri="+PROTOCOL+"://"+DOMAIN+":"+PORT+"/set/refreshtoken"});
+                }
+            },
+            function (){
+                res.status(500).json({"message":"internal error"});
+            }
+        );
+    } else {
+        res.status(401).json({"message":"no session cookie"});
+    }
+});
+
+app.get("/set/refreshtoken", function(req,res){
+    if(req.session.loggedIn){
+        if(req.query.code){
+            const PORT = process.env.PORT || 3000;
+            const CLIENTID = process.env.CLIENTID;
+            const CLIENTSECRET = process.env.CLIENTSECRET;
+            const DOMAIN = process.env.DOMAIN || "localhost";
+            const PROTOCOL = process.env.PROTOCOL || "http";
+
+            let data = `${encodeURI('grant_type')}=${encodeURI('authorization_code')}&${encodeURI('code')}=${encodeURI(req.query.code)}&${encodeURI('redirect_uri')}=${encodeURI(PROTOCOL+"://"+DOMAIN+":"+PORT+"/set/refreshtoken")}`;
+            let appidentification = btoa(CLIENTID+":"+CLIENTSECRET);
+            const options = {
+                hostname: 'accounts.spotify.com',
+                port: 443,
+                path: '/api/token',
+                method: 'POST',
+                headers: {
+                'Authorization': 'Basic '+appidentification,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }};
+
+            new Promise(function(resolve, reject) {
+                const access_refresh = https.request(options, res_acc => {
+                    let responseBody = '';
+
+                    res_acc.on('data', d => {responseBody = responseBody + d;});
+                    res_acc.on('end', function () {
+                        const parsedBody = JSON.parse(responseBody + '');
+                        if(res_acc.statusCode == 200){
+                            refreshTable.create(req.session.user_id,parsedBody.refresh_token);
+                            resolve();
+                        }
+                    });
+                });
+                
+                access_refresh.write(data);
+                access_refresh.end();
+                access_refresh.on('error', error => {
+                    reject();
+                });
+            }).then(
+                function(){
+                    res.redirect("/swipe");
+                },
+                function(){
+                    res.redirect("/swipe");
+                }
+            );
+        } else {
+            res.redirect("/swipe");
+        }
+    } else {
+        res.redirect("/swipe");
+    }
+});
+
+app.get("/get/accesstoken", function(req,res){});
+
+app.post("create/playlist", function(req,res){});
 app.post("/dislike/:id", function(req,res){});
 app.post("/like/:id", function(req, res){});
 app.post("/delete", function(req,res){});
-app.get("/new/accesstoken", function(req,res){});
-app.post("/set/refreshtoken", function(req,res){});
 app.put("/setting", function(req, res){});
 app.get("/setting", function(req, res){});
 app.put("/reset/stats", function(req,res){});
