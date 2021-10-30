@@ -1,3 +1,4 @@
+//import modules
 const express=require('express');
 const AppDAO = require('./db/dao');
 const dislikedRepo = require('./db/disliked-Repo');
@@ -9,6 +10,7 @@ const userRepo = require('./db/user-Repo');
 const session = require('express-session');
 const bcrypt = require ('bcrypt');
 const https = require('https');
+const { parse } = require('path');
 
 //objects for the db
 const dao = new AppDAO('./db/tinify.db');
@@ -223,6 +225,7 @@ app.post("/user/connected", function(req,res){
 });
 
 app.get("/set/refreshtoken", function(req,res){
+    //only session cookie is neccessary & only works if response from a spotify login attempt
     if(req.session.loggedIn){
         if(req.query.code){
             const PORT = process.env.PORT || 3000;
@@ -278,9 +281,67 @@ app.get("/set/refreshtoken", function(req,res){
     }
 });
 
-app.get("/get/accesstoken", function(req,res){});
+app.get("/get/accesstoken", function(req,res){
+    //return data is a json object with token and time to live
+    if(req.session.loggedIn){
+        const CLIENTID = process.env.CLIENTID;
+        const CLIENTSECRET = process.env.CLIENTSECRET;
 
-app.post("create/playlist", function(req,res){});
+        refreshTable.getByUser(req.session.user_id).then(
+            function(datarefreshResponse){
+                if(datarefreshResponse){
+                    let data = `${encodeURI('grant_type')}=${encodeURI('refresh_token')}&${encodeURI('refresh_token')}=${encodeURI(datarefreshResponse.refresh_token)}`;
+                    let appidentification = btoa(CLIENTID+":"+CLIENTSECRET);
+                    const options = {
+                        hostname: 'accounts.spotify.com',
+                        port: 443,
+                        path: '/api/token',
+                        method: 'POST',
+                        headers: {
+                        'Authorization': 'Basic '+appidentification,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }};
+            
+                    new Promise(function(resolve, reject) {
+                        const access_refresh = https.request(options, res_acc => {
+                            let responseBody = '';
+            
+                            res_acc.on('data', d => {responseBody = responseBody + d;});
+                            res_acc.on('end', function () {
+                                const parsedBody = JSON.parse(responseBody + '');
+                                if(res_acc.statusCode == 200){
+                                    resolve(parsedBody);
+                                }
+                            });
+                        });
+                        
+                        access_refresh.write(data);
+                        access_refresh.end();
+                        access_refresh.on('error', error => {
+                            reject();
+                        });
+                    }).then(
+                        function(data){
+                            let expireDate = Date.now() + data.expires_in * 1000;
+                            res.status(200).json({"access_token":data.access_token,"expires":expireDate});
+                        },
+                        function(){
+                            res.status(500).json({"message":"internal error"});
+                        }
+                    );
+                } else {
+                    res.status(500).json({"message":"internal error"});
+                }
+            },
+            function(){
+                res.status(500).json({"message":"internal error"});
+            }
+        );
+    } else {
+        res.status(401).json({"message":"no session cookie"});
+    }
+});
+
 app.post("/dislike/:id", function(req,res){});
 app.post("/like/:id", function(req, res){});
 app.post("/delete", function(req,res){});

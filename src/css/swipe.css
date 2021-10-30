@@ -20,6 +20,7 @@
 
 #swipe-login-spotify button {
     background-color: rgb(226, 126, 140);
+    color: rgb(0,0,0);
 }
 
 #swipe-login-spotify button:hover {
@@ -224,6 +225,7 @@ button {
     background-color: rgb(240, 240, 240);
     cursor: pointer;
     margin: 10px 0;
+    color: rgb(0,0,0);
 }
 
 button:hover {
@@ -271,10 +273,12 @@ button:active {
 #swipe-popup-delete {
     margin-top: 20px;
     background-color: rgb(219, 35, 59);
+    color:rgb(0,0,0);
 }
 
 #swipe-popup-logout {
     background-color: rgb(56, 230, 172);
+    color:rgb(0,0,0);
 }
 
 #swipe-popup-delete:hover {

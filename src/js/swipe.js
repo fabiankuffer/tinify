@@ -9,6 +9,8 @@ function initLogout(){
 }
 
 function logout(){
+    localStorage.removeItem("accesstoken");   
+    localStorage.removeItem("expireDate");
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4){
@@ -34,6 +36,7 @@ function checkIfConnected(){
                 if(response.connected){
                     spotifyLogin.style.display = "none";
                     cart.style.display = "block";
+                    checkAccessToken();
                 } else {
                     spotifyLogin.style.display = "block";
                     spotifyButton.addEventListener("click",function(){
@@ -49,5 +52,32 @@ function checkIfConnected(){
         }
     };
     xhttp.open("post", "/user/connected", true);
+    xhttp.send();
+}
+
+function checkAccessToken(){
+    if(localStorage.accesstoken && localStorage.expireDate){
+        if(localStorage.expireDate < Date.now()){
+            requestAccessToken();
+        }
+    } else {
+        requestAccessToken();
+    }
+}
+
+function requestAccessToken(){
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4){
+            if(this.status == 200) {
+                let response = JSON.parse(xhttp.responseText); 
+                localStorage.setItem("accesstoken", response.access_token);
+                localStorage.setItem("expireDate", response.expires);
+            } else {
+                console.log("error no new accesstoken");
+            }
+        }
+    };
+    xhttp.open("get", "/get/accesstoken", true);
     xhttp.send();
 }
