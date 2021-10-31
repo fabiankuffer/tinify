@@ -102,9 +102,19 @@
     background-size: 30% auto, cover;
 }
 
-#swipe-music-play-option:hover {
+.play_song:hover {
     display: block;
     background-image:url("../media/icons/play_circle_filled.svg"), linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+}
+
+.pause_song:hover {
+    display: block;
+    background-image:url("../media/icons/pause_circle_filled.svg"), linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+}
+
+.replay_song:hover {
+    display: block;
+    background-image:url("../media/icons/replay.svg"), linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
 }
 
 #swipe-cart-title {
@@ -285,75 +295,6 @@ button:active {
     background-color: rgb(199, 15, 39);
 }
 
-#swipe-popup-autoplay {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    align-items: center;
-    margin: 20px 0;
-}
-
-.swipe-popup-switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-  }
-  
-.swipe-popup-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-  
-.swipe-popup-switch .swipe-popup-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgb(180,180,180);
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 34px;
-}
-  
-.swipe-popup-switch .swipe-popup-slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: rgb(255,255,255);
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 50%;
-}
-  
-.swipe-popup-switch input:checked + .swipe-popup-slider {
-    background-color: rgb(238, 156, 167);
-}
-  
-.swipe-popup-switch input:focus + .swipe-popup-slider {
-    box-shadow: 0 0 1px rgb(238, 156, 167);
-}
-  
-.swipe-popup-switch input:checked + .swipe-popup-slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-}  
-
-#swipe-popup-message {
-    color: rgb(31, 155, 114);
-    width: 100%;
-    text-align: center;
-    margin: 20px 0 0 0;
-    font-size: 0.9em;
-}
-
 @media screen and (max-width: 1000px) {
     #swipe-main-container {
       width: 100%;
@@ -398,8 +339,19 @@ button:active {
         background-image: url("../media/icons/hourglass_white.svg"), linear-gradient(rgb(21, 21, 21), rgb(33, 33, 33));
     }
 
-    #swipe-music-play-option:hover {
-        background-image:url("../media/icons/play_circle_filled.svg"), linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+    .play_song:hover {
+        display: block;
+        background-image:url("../media/icons/play_circle_filled_white.svg"), linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+    }
+    
+    .pause_song:hover {
+        display: block;
+        background-image:url("../media/icons/pause_circle_filled_white.svg"), linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+    }
+    
+    .replay_song:hover {
+        display: block;
+        background-image:url("../media/icons/replay_white.svg"), linear-gradient(0deg, rgba(0, 0, 0, 0.6), v);
     }
 
     #swipe-account-icon {
@@ -439,14 +391,6 @@ button:active {
     
     .swipe-popup-radio:checked + .swipe-popup-label:hover {
         background-color: rgb(9, 86, 118);
-    }
-
-    .swipe-popup-switch input:checked + .swipe-popup-slider {
-        background-color: rgb(19, 106, 138);
-    }
-      
-    .swipe-popup-switch input:focus + .swipe-popup-slider {
-        box-shadow: 0 0 1px rgb(9, 86, 118);
     }
 
     #swipe-cart-title {

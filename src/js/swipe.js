@@ -2,32 +2,39 @@ var spotify_UserID = null;
 var spotify_PlaylistID = null;
 var spotify_song_url = null;
 var spotify_song_id = null;
+var audio_obj = new Audio();
+var audio_current_Time = 0;
 
 window.onload = function () {
     initPopups();
     initLogout();
+    initAudioPlayback();
+    initLikeDislike();
     //setup to get the first song
     checkConnected().then(
         function(){
-            checkAccessToken();
-            getSpotifyUserID().then(
+            checkAccessToken().then(
                 function(){
-                    checkPlaylist().then(
+                    getSpotifyUserID().then(
                         function(){
-                            getValidSong();
-                        },
-                        function(){
-                            createPlaylist().then(
+                            checkPlaylist().then(
                                 function(){
                                     getValidSong();
                                 },
-                                function(){}
+                                function(){
+                                    createPlaylist().then(
+                                        function(){
+                                            getValidSong();
+                                        },
+                                        function(){}
+                                    );
+                                }
                             );
-                        }
+                        },
+                        function(){}
                     );
-                },
-                function(){}
-            );
+                }
+            )
         },
         function(){}
     );
@@ -164,6 +171,7 @@ function displaySong(data) {
     image.style.backgroundSize = "100% auto, cover";
 
     spotify_song_url = data.preview_url;
+    audio_obj.src = spotify_song_url;
 }
 
 function getRandomSearch() {
@@ -186,6 +194,52 @@ function getRandomSearch() {
 
 function initLogout(){
     document.getElementById("swipe-popup-logout").addEventListener("click", logout);
+}
+
+function initAudioPlayback(){
+    document.getElementById("swipe-music-play-option").addEventListener("click", audioPlayer);
+    document.getElementById("swipe-music-play-option").addEventListener("mouseover", setAudioWidget);
+}
+
+function setAudioWidget(){
+    let widget = document.getElementById("swipe-music-play-option");
+    widget.classList.remove("play_song","pause_song","replay_song");
+    if(audio_obj.paused && !audio_obj.ended){
+        widget.classList.add("play_song");
+    } else if(audio_obj.ended){
+        widget.classList.add("replay_song");
+    } else {
+        widget.classList.add("pause_song");
+    }
+}
+
+function initLikeDislike(){
+    document.getElementById("swipe-cart-dislike").addEventListener("click",dislikedSong);
+    document.getElementById("swipe-cart-like").addEventListener("click",likedSong);
+}
+
+function dislikedSong(){
+    audio_obj.pause();
+    getValidSong();
+}
+
+function likedSong(){
+    audio_obj.pause();
+    getValidSong();
+}
+
+function audioPlayer(){
+    let widget = document.getElementById("swipe-music-play-option");
+    widget.classList.remove("play_song","pause_song","replay_song");
+    
+    console.log(audio_obj.paused);
+    if(audio_obj.paused){
+        audio_obj.play();
+        widget.classList.add("pause_song");
+    } else {
+        widget.classList.add("play_song");
+        audio_obj.pause();
+    }
 }
 
 function logout(){
@@ -241,7 +295,7 @@ function checkConnected(){
 
 async function checkAccessToken(){
     if(localStorage.accesstoken && localStorage.expireDate){
-        if(localStorage.expireDate < Date.now()+5000){
+        if(localStorage.expireDate < Date.now()-5000){
             await requestAccessToken();
         }
     } else {
