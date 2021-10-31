@@ -342,8 +342,78 @@ app.get("/get/accesstoken", function(req,res){
     }
 });
 
-app.post("/dislike/:id", function(req,res){});
-app.post("/like/:id", function(req, res){});
+app.post("/dislike/:id", function(req,res){
+    if(req.session.loggedIn){
+        if(req.params.id){
+            dislikedTable.create(req.session.loggedIn, req.params.id).then(
+                function(){
+                    res.status(200).json({"message":"song added"});
+                },
+                function(){
+                    res.status(500).json({"message":"internal error"});
+                }
+            );
+        } else {
+            res.status(40).json({"message":"missed song id"});
+        }
+    } else {
+        res.status(401).json({"message":"no session cookie"});
+    }
+});
+
+app.post("/like/:id", function(req, res){
+    if(req.session.loggedIn){
+        if(req.params.id){
+            likedTable.create(req.session.loggedIn, req.params.id).then(
+                function(){
+                    res.status(200).json({"message":"song added"});
+                },
+                function(){
+                    res.status(500).json({"message":"internal error"});
+                }
+            );
+        } else {
+            res.status(40).json({"message":"missed song id"});
+        }
+    } else {
+        res.status(401).json({"message":"no session cookie"});
+    }
+});
+
+app.get("/reviewed/:id", function(req,res){
+    if(req.session.loggedIn){
+        if(req.params.id){
+            likedTable.getByUserAndSong(req.session.loggedIn, req.params.id).then(
+                function(data){
+                    if(data.count == 0){
+                        dislikedTable.getByUserAndSong(req.session.loggedIn, req.params.id).then(
+                            function(data2){
+                                if(data2.count == 0){
+                                    res.status(200).json({"reviewed":false});
+                                } else {
+                                    res.status(200).json({"reviewed":true});
+                                }
+                            },
+                            function(){
+                                res.status(500).json({"message":"internal error"});
+                            }
+                        );
+                    } else {
+                        res.status(200).json({"reviewed":true});
+                    }
+                },
+                function(){
+                    res.status(500).json({"message":"internal error"});
+                }
+            );
+        } else {
+            res.status(40).json({"message":"missed song id"});
+        }
+    } else {
+        res.status(401).json({"message":"no session cookie"});
+    }
+});
+
 app.post("/delete", function(req,res){});
 app.put("/setting", function(req, res){});
 app.get("/setting", function(req, res){});

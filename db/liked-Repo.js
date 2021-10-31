@@ -30,7 +30,7 @@ class likedRepo {
 
     getByUserAndSong(user,song) {
         return this.dao.get(
-          `SELECT * FROM liked WHERE user_id = ? AND song_id = ?`,
+          `SELECT COUNT(*) AS count FROM liked WHERE user_id = ? AND song_id = ?`,
           [user,song]);
     }
 

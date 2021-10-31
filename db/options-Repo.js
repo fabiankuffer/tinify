@@ -7,14 +7,13 @@ class optionsRepo {
       const sql = `
       CREATE TABLE IF NOT EXISTS options (
         user_id INTEGER NOT NULL PRIMARY KEY,
-        autoplay INTEGER NOT NULL,
         suggestions INTEGER NOT NULL,
         FOREIGN KEY(user_id) REFERENCES Users(id)
         )`;
       return this.dao.run(sql);
     }
 
-    create(user_id, autoplay, suggestions) {
+    create(user_id, suggestions) {
         return this.dao.run(
           `INSERT INTO options (user_id, suggestions)
             VALUES (?, ?)`,
@@ -22,13 +21,12 @@ class optionsRepo {
     }
 
     update(options) {
-        const { user_id, autoplay, suggestions} = options
+        const { user_id, suggestions} = options
         return this.dao.run(
           `UPDATE options
-          SET autoplay = ?,
-            suggestions = ?
+          SET suggestions = ?
           WHERE user_id = ?`,
-          [autoplay, suggestions, user_id]
+          [suggestions, user_id]
         );
     }
 

@@ -138,18 +138,51 @@ function loadSong(){
 }
 
 async function getValidSong() {
-    await loadSong().then(
-        function(data){
-            if(data.preview_url == null){
-                getValidSong();
-            } else {
-                displaySong(data);
-            }
-        },
-        function(data){
-            getValidSong();
+    await checkAccessToken().then(
+        async function(){
+            await loadSong().then(
+                function(data){
+                    if(data.preview_url == null){
+                        getValidSong();
+                    } else {
+                        checkReviewed(data.id).then(
+                            function(){
+                                displaySong(data);
+                            },
+                            function(){
+                                getValidSong();
+                            }
+                        );
+                    }
+                },
+                function(data){
+                    getValidSong();
+                }
+            );
         }
     );
+}
+
+function checkReviewed(song_id){
+    return new Promise(function(resolve,reject){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4){
+                if(this.status == 200) {
+                    let response = JSON.parse(xhttp.responseText); 
+                    if(response.reviewed){
+                        reject();
+                    } else {
+                        resolve();
+                    }
+                } else {
+                    reject();
+                }
+            }
+        };
+        xhttp.open("get", "/reviewed/"+encodeURI(song_id), true);
+        xhttp.send();
+    });
 }
 
 function displaySong(data) {
@@ -171,6 +204,7 @@ function displaySong(data) {
     image.style.backgroundSize = "100% auto, cover";
 
     spotify_song_url = data.preview_url;
+    spotify_song_id = data.id;
     audio_obj.src = spotify_song_url;
 }
 
@@ -220,19 +254,75 @@ function initLikeDislike(){
 
 function dislikedSong(){
     audio_obj.pause();
+    addDislike(spotify_song_id);
     getValidSong();
+}
+
+function addDislike(song_id){
+    return new Promise(function(resolve, reject){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4){
+                if(this.status == 200) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            }
+        };
+        xhttp.open("post", "/dislike/"+encodeURI(song_id), true);
+        xhttp.send();
+    });
 }
 
 function likedSong(){
     audio_obj.pause();
+    addLike(spotify_song_id);
+    addSongToPlaylist(spotify_song_id, spotify_PlaylistID);
     getValidSong();
+}
+
+function addSongToPlaylist(song_id, playlist_id){
+    return new Promise(function(resolve, reject){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4){
+                if(this.status == 200) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            }
+        };
+        xhttp.open("post", "https://api.spotify.com/v1/playlists/"+playlist_id+"/tracks", true);
+        xhttp.setRequestHeader("Accept","application/json");
+        xhttp.setRequestHeader("Content-Type","application/json");
+        xhttp.setRequestHeader("Authorization","Bearer "+localStorage.getItem("accesstoken"));
+        xhttp.send(JSON.stringify({"uris": ["spotify:track:"+song_id]}));
+    });
+}
+
+function addLike(song_id){
+    return new Promise(function(resolve, reject){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4){
+                if(this.status == 200) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            }
+        };
+        xhttp.open("post", "/like/"+encodeURI(song_id), true);
+        xhttp.send();
+    });
 }
 
 function audioPlayer(){
     let widget = document.getElementById("swipe-music-play-option");
     widget.classList.remove("play_song","pause_song","replay_song");
     
-    console.log(audio_obj.paused);
     if(audio_obj.paused){
         audio_obj.play();
         widget.classList.add("pause_song");
