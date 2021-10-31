@@ -417,7 +417,6 @@ app.get("/reviewed/:id", function(req,res){
 app.post("/delete", function(req,res){});
 app.put("/setting", function(req, res){});
 app.get("/setting", function(req, res){});
-app.put("/reset/stats", function(req,res){});
 
 //webserver start
 const PORT = process.env.PORT || 3000;

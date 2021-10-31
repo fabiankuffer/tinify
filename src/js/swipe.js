@@ -170,7 +170,7 @@ function checkReviewed(song_id){
             if (this.readyState == 4){
                 if(this.status == 200) {
                     let response = JSON.parse(xhttp.responseText); 
-                    if(response.reviewed){
+                    if(response.reviewed == true){
                         reject();
                     } else {
                         resolve();
