@@ -13,7 +13,7 @@ const https = require('https');
 const { parse } = require('path');
 
 //objects for the db
-const dao = new AppDAO('./db/tinify.db');
+const dao = new AppDAO('./db/db/tinify.db');
 const dislikedTable = new dislikedRepo(dao);
 const likedTable = new likedRepo(dao);
 const loginattemptTable = new loginattemptRepo(dao);
@@ -212,7 +212,8 @@ app.post("/user/connected", function(req,res){
                     const CLIENTID = process.env.CLIENTID;
                     const DOMAIN = process.env.DOMAIN || "localhost";
                     const PROTOCOL = process.env.PROTOCOL || "http";
-                    res.status(200).json({"connected":false,"link":"https://accounts.spotify.com/authorize?response_type=code&client_id="+CLIENTID+"&scope=playlist-modify-private%20playlist-read-private%20user-top-read&redirect_uri="+PROTOCOL+"://"+DOMAIN+":"+PORT+"/set/refreshtoken"});
+                    const EXTERNALPORT = process.env.EXTERNALPORT || PORT;
+                    res.status(200).json({"connected":false,"link":"https://accounts.spotify.com/authorize?response_type=code&client_id="+CLIENTID+"&scope=playlist-modify-private%20playlist-read-private%20user-top-read&redirect_uri="+PROTOCOL+"://"+DOMAIN+":"+EXTERNALPORT+"/set/refreshtoken"});
                 }
             },
             function (){
@@ -229,12 +230,13 @@ app.get("/set/refreshtoken", function(req,res){
     if(req.session.loggedIn){
         if(req.query.code){
             const PORT = process.env.PORT || 3000;
+            const EXTERNALPORT = process.env.EXTERNALPORT || PORT;
             const CLIENTID = process.env.CLIENTID;
             const CLIENTSECRET = process.env.CLIENTSECRET;
             const DOMAIN = process.env.DOMAIN || "localhost";
             const PROTOCOL = process.env.PROTOCOL || "http";
 
-            let data = `${encodeURI('grant_type')}=${encodeURI('authorization_code')}&${encodeURI('code')}=${encodeURI(req.query.code)}&${encodeURI('redirect_uri')}=${encodeURI(PROTOCOL+"://"+DOMAIN+":"+PORT+"/set/refreshtoken")}`;
+            let data = `${encodeURI('grant_type')}=${encodeURI('authorization_code')}&${encodeURI('code')}=${encodeURI(req.query.code)}&${encodeURI('redirect_uri')}=${encodeURI(PROTOCOL+"://"+DOMAIN+":"+EXTERNALPORT+"/set/refreshtoken")}`;
             let appidentification = btoa(CLIENTID+":"+CLIENTSECRET);
             const options = {
                 hostname: 'accounts.spotify.com',
