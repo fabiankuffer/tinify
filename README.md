@@ -3,6 +3,7 @@ Like tinder, but with songs from Spotify
 
 ## Description and functions
 Tinify is a project of the web engineering course at DHBW. With Tinify you can rate random songs from Spotify and if you like the song it will be added to a Spotify playlist. With this, new songs can be found quickly on Spotify.
+
 **Functions of the webapp**
 - dark and light design depending on OS setting
 - Account creation for Tinify
