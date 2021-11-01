@@ -73,7 +73,7 @@ The Docker image will create a volume in addition to the container to persistent
 ## Entity-Relationship-Modell
 ![erm](db/erd.png)
 
-##Elements integrated
+## Elements integrated
 - own CSS
 - Spotify login and music suggestions
 - Login via REST-API on nodejs with sqlite
