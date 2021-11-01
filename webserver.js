@@ -347,7 +347,7 @@ app.get("/get/accesstoken", function(req,res){
 app.post("/dislike/:id", function(req,res){
     if(req.session.loggedIn){
         if(req.params.id){
-            dislikedTable.create(req.session.loggedIn, req.params.id).then(
+            dislikedTable.create(req.session.user_id, req.params.id).then(
                 function(){
                     res.status(200).json({"message":"song added"});
                 },
@@ -366,7 +366,7 @@ app.post("/dislike/:id", function(req,res){
 app.post("/like/:id", function(req, res){
     if(req.session.loggedIn){
         if(req.params.id){
-            likedTable.create(req.session.loggedIn, req.params.id).then(
+            likedTable.create(req.session.user_id, req.params.id).then(
                 function(){
                     res.status(200).json({"message":"song added"});
                 },
@@ -416,7 +416,57 @@ app.get("/reviewed/:id", function(req,res){
     }
 });
 
-app.post("/delete", function(req,res){});
+app.post("/delete", function(req,res){
+    if(req.session.loggedIn){
+        likedTable.delete(req.session.user_id).then(
+            function(){
+                dislikedTable.delete(req.session.user_id).then(
+                    function(){
+                        optionsTable.delete(req.session.user_id).then(
+                            function(){
+                                refreshTable.delete(req.session.user_id).then(
+                                    function(){
+                                        loginattemptTable.deleteOlderThan(req.session.user_id,Date.now()).then(
+                                            function(){
+                                                userTable.delete(req.session.user_id).then(
+                                                    function(){
+                                                        res.status(200).json({"message":"successful data deleted"});
+                                                    },
+                                                    function(){
+                                                        res.status(500).json({"message":"internal error"});
+                                                    }
+                                                );
+                                            },
+                                            function(){
+                                                res.status(500).json({"message":"internal error"});
+                                            }
+                                        );
+                                    },
+                                    function(){
+                                        res.status(500).json({"message":"internal error"});
+                                    }
+                                );
+                            },
+                            function(){
+                                res.status(500).json({"message":"internal error"});
+                            }
+                        );
+                    },
+                    function(){
+                        res.status(500).json({"message":"internal error"});
+                    }
+                );
+            },
+            function(){
+                res.status(500).json({"message":"internal error"});
+            }
+        );
+    } else {
+        res.status(401).json({"message":"no session cookie"});
+    }
+});
+
+
 app.put("/setting", function(req, res){});
 app.get("/setting", function(req, res){});
 

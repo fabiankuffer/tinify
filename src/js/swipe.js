@@ -8,6 +8,7 @@ var audio_current_Time = 0;
 window.onload = function () {
     initPopups();
     initLogout();
+    initDelete();
     initAudioPlayback();
     initLikeDislike();
     //setup to get the first song
@@ -410,6 +411,48 @@ function requestAccessToken(){
             }
         };
         xhttp.open("get", "/get/accesstoken", true);
+        xhttp.send();
+    });
+}
+
+function initDelete(){
+    document.getElementById("swipe-popup-delete").addEventListener("click", function(){
+        deleteAccount();
+    });
+}
+
+const deleteAccount = (function(){
+    let count = 0;
+    return function(){
+        count++;
+        if(count == 1){
+            document.getElementById("swipe-popup-delete-warning").style.display = "block";
+        } else {
+            deleteRequest().then(
+                function(){
+                    logout();
+                },
+                function(){
+
+                }
+            );
+        }
+    };
+})();
+
+function deleteRequest(){
+    return new Promise(function(resolve, reject){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4){
+                if(this.status == 200) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            }
+        };
+        xhttp.open("post", "/delete", true);
         xhttp.send();
     });
 }

@@ -225,6 +225,12 @@
     margin: 20px;
 }
 
+#swipe-popup-delete-warning {
+    text-align: center;
+    color: rgb(199, 15, 39);
+    display: none;
+}
+
 button {
     display: block;
     width: 100%;
