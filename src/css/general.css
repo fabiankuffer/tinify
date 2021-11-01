@@ -4,6 +4,11 @@
     margin: 0;
     font-family: 'Montserrat', Arial, Helvetica, sans-serif;
     user-select: none;
+    cursor:default;
+}
+
+input {
+    cursor: text;
 }
 
 body {

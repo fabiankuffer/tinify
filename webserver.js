@@ -385,10 +385,10 @@ app.post("/like/:id", function(req, res){
 app.get("/reviewed/:id", function(req,res){
     if(req.session.loggedIn){
         if(req.params.id){
-            likedTable.getByUserAndSong(req.session.loggedIn, req.params.id).then(
+            likedTable.getByUserAndSong(req.session.user_id, req.params.id).then(
                 function(data){
                     if(data.count == 0){
-                        dislikedTable.getByUserAndSong(req.session.loggedIn, req.params.id).then(
+                        dislikedTable.getByUserAndSong(req.session.user_id, req.params.id).then(
                             function(data2){
                                 if(data2.count == 0){
                                     res.status(200).json({"reviewed":false});
@@ -467,7 +467,7 @@ app.post("/delete", function(req,res){
 });
 
 
-app.put("/setting", function(req, res){});
+app.post("/setting", function(req, res){});
 app.get("/setting", function(req, res){});
 
 //webserver start
