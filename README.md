@@ -70,6 +70,7 @@ The Docker image will create a volume in addition to the container to persistent
 - **Delete volume**: run `docker volume prune` if the volume name isn't known. However, all unused volumes are deleted. If the volume name is known, the single volume can be deleted with `docker volume rm <volume-name>`.
 
 ## Data flow diagram
+![data_flow_diagram](screenshots/data_flow_diagram.png)
 
 ## Entity-Relationship-Modell
 ![erm](db/erd.png)
