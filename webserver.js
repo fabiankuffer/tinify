@@ -171,6 +171,7 @@ app.post("/signup", function(req,res){
                             function(data){
                                 req.session.loggedIn = true;
                                 req.session.user_id = data.id;
+                                optionsTable.create(data.id,0);
                                 res.status(200).json({"message":"User created"});
                             },
                             function(data){
@@ -469,9 +470,34 @@ app.post("/delete", function(req,res){
     }
 });
 
+app.get("/setting", function(req, res){
+    if(req.session.loggedIn){
+        optionsTable.getByUser(req.session.user_id).then(
+            function(data){
+                if(data){
+                    if(data.hasOwnProperty("suggestions")){
+                        res.status(200).json({"suggestions":data.suggestions});
+                    } else {
+                        optionsTable.create(req.session.user_id,0);
+                        res.status(200).json({"suggestions":0});
+                    }
+                } else {
+                    optionsTable.create(req.session.user_id,0);
+                    res.status(200).json({"suggestions":0});
+                }
+            },
+            function(){
+                res.status(500).json({"message":"internal error"});
+            }
+        );
+    } else {
+        res.status(401).json({"message":"no session cookie"});
+    }
+});
 
-app.post("/setting", function(req, res){});
-app.get("/setting", function(req, res){});
+app.post("/setting", function(req, res){
+
+});
 
 //webserver start
 const PORT = process.env.PORT || 3000;

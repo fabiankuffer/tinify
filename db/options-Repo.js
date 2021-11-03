@@ -4,6 +4,8 @@ class optionsRepo {
     }
   
     createTable() {
+      //suggestion:0 => random song
+      //suggestion:1 => recommended song
       const sql = `
       CREATE TABLE IF NOT EXISTS options (
         user_id INTEGER NOT NULL PRIMARY KEY,
