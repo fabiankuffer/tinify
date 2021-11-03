@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Tinify</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32" href="media/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="media/favicon/favicon-16x16.png">
+        <script src="js/swipe.js"></script>
+        <script src="js/popup.js"></script>
+        <script src="js/rest.js"></script>
+        <script src="js/spotify.js"></script>
+        <link rel="stylesheet" href="css/swipe.css">
+    </head>
+    <body>
+        <div id="swipe-popup-settings-background" class="popup-background">
+            <div id="swipe-popup-settings-container">
+                <span id="swipe-popup-close" class="popup-close">&times;</span>
+                <div id="swipe-popup-title">Settings</div>
+                <button id="swipe-popup-logout">Logout from Tinify</button>
+                <div class="swipe-popup-subheading" id="swipe-popup-suggestions">Suggestions:</div>
+                <hr>
+                <div id="swipe-popup-suggestions-options">
+                    <input type="radio" id="swipe-popup-all-songs" class="swipe-popup-radio" name="suggestions" checked>
+                    <label for="swipe-popup-all-songs" class="swipe-popup-label">All songs</label>
+                    <input type="radio" id="swipe-popup-recommended-songs" class="swipe-popup-radio" name="suggestions">
+                    <label for="swipe-popup-recommended-songs" class="swipe-popup-label">Spotify recommended</label>
+                </div>
+                <button id="swipe-popup-delete">Delete Tinify account</button>
+                <div id="swipe-popup-delete-warning">A deleted Tinify account can't be restored. If you really want to delete your account click the button again.</div>
+            </div>
+        </div>
+        <div id="swipe-main-container">
+            <div id="swipe-account-icon" class="popup-open"></div>
+            <div id="swipe-login-spotify">
+                You need to sign in to Spotify to access music and to add music you like to the Tinity playlist.
+                <button id="spotify-login-button">Sign-In Spotify</button>
+            </div>
+            <div id="swipe-cart-container">
+                <div id="swipe-cart-image-container">
+                    <div id="swipe-music-play-option"></div>
+                </div>
+                <div id="swipe-cart-title">Titel</div>
+                <div id="swipe-cart-artist">Artist</div>
+                <div id="swipe-cart-button-container">
+                    <div id="swipe-cart-dislike"></div>
+                    <div id="swipe-cart-like"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

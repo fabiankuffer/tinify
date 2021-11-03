@@ -1,0 +1,33 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+    user-select: none;
+    cursor:default;
+}
+
+input {
+    cursor: text;
+}
+
+body {
+    background: rgb(238, 156, 167);
+    background: linear-gradient(to right, rgb(238, 156, 167), rgb(255, 221, 225)) fixed;
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Damion', Arial, Helvetica, sans-serif;
+}
+
+*:focus {
+    outline: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: rgb(19, 106, 138);
+        background: linear-gradient(to right, rgb(19, 106, 138), rgb(38, 120, 113)) fixed;
+    }
+}

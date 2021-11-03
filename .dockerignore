@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+**/todo
+db/db/tinify.db
+Spotify_WEB-API
+screenshots
+README.md
+LICENSE
+Dockerfile
+.gitignore
+.dockerignore
+.git
