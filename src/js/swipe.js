@@ -4,6 +4,7 @@ var spotify_song_url = null;
 var spotify_song_id = null;
 var audio_obj = new Audio();
 var audio_current_Time = 0;
+var recommendation = 0;
 
 window.onload = function () {
     initPopups();
@@ -11,7 +12,11 @@ window.onload = function () {
     initDelete();
     initAudioPlayback();
     initLikeDislike();
-    initSpotifyConnection();
+    initSuggestion().finally(
+        function(){
+            initSpotifyConnection();
+        }
+    );
 };
 
 function initLogout(){
@@ -172,3 +177,14 @@ const deleteAccount = (function(){
         }
     };
 })();
+
+async function initSuggestion(){
+    document.getElementById("swipe-popup-all-songs").addEventListener("change",function(){updateRecommendation("all");});
+    document.getElementById("swipe-popup-recommended-songs").addEventListener("change",function(){updateRecommendation("recommended");});
+    await loadRecommendation().then(function(){},function(){});
+    if(recommendation == 1){
+        document.getElementById("swipe-popup-recommended-songs").checked = true;
+    } else {
+        document.getElementById("swipe-popup-all-songs").checked = true;
+    }
+}

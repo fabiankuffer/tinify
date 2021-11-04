@@ -496,7 +496,31 @@ app.get("/setting", function(req, res){
 });
 
 app.post("/setting", function(req, res){
-
+    if(req.session.loggedIn){
+        if(req.body.suggestion == "recommended"){
+            optionsTable.update(req.session.user_id,1).then(
+                function(){
+                    res.status(200).json({"suggestions":1});
+                },
+                function(){
+                    res.status(500).json({"message":"internal error"});
+                }
+            );
+        } else if (req.body.suggestion){
+            optionsTable.update(req.session.user_id,0).then(
+                function(){
+                    res.status(200).json({"suggestions":0});
+                },
+                function(){
+                    res.status(500).json({"message":"internal error"});
+                }
+            );
+        } else {
+            res.status(400).json({"message":"wrong parameters"});
+        }
+    } else {
+        res.status(401).json({"message":"no session cookie"});
+    }
 });
 
 //webserver start

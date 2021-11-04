@@ -142,3 +142,43 @@ function requestAccessToken(){
         xhttp.send();
     });
 }
+
+function updateRecommendation(song_type){
+    let data;
+    if(song_type == "all"){
+        data = JSON.stringify({"suggestion":"all"});
+    } else if(song_type == "recommended") {
+        data = JSON.stringify({"suggestion":"recommended"});
+    } else {
+        return;
+    }
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+    };
+    xhttp.open("post", "/setting", true);
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhttp.send(data);
+}
+
+function loadRecommendation(){
+    return new Promise(function(resolve, reject){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4){
+                if(this.status == 200) {
+                    let response = JSON.parse(xhttp.responseText);
+                    if(response.suggestions){
+                        recommendation = response.suggestions;
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                } else {
+                    reject();
+                }
+            }
+        };
+        xhttp.open("get", "/setting", true);
+        xhttp.send();
+    });
+}
