@@ -148,11 +148,14 @@ function updateRecommendation(song_type){
     let data;
     if(song_type == "all"){
         data = JSON.stringify({"suggestion":"all"});
+        recommendation = 0;
     } else if(song_type == "recommended") {
         data = JSON.stringify({"suggestion":"recommended"});
+        recommendation = 1;
     } else {
         return;
     }
+    displayInSnackbar("Recommendation modified");
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if(this.readyState == 4){
@@ -164,6 +167,7 @@ function updateRecommendation(song_type){
     xhttp.open("post", "/setting", true);
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhttp.send(data);
+    getValidSong();
 }
 
 function loadRecommendation(){
@@ -173,7 +177,7 @@ function loadRecommendation(){
             if (this.readyState == 4){
                 if(this.status == 200) {
                     let response = JSON.parse(xhttp.responseText);
-                    if(response.suggestions){
+                    if(response.hasOwnProperty("suggestions")){
                         recommendation = response.suggestions;
                         resolve();
                     } else {

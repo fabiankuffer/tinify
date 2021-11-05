@@ -18,6 +18,7 @@ Tinify is a project of the web engineering course at DHBW. With Tinify you can r
 - play a 30s preview
 - Choice between random song and recommended song
 - api response type returns the status of the query in addition to the json message
+- snackbox for errormessages
 
 ## Set up Spotify Developer access
 Spotify tokens are not provided as they are assigned to a developer account and should not be made public.

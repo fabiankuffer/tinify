@@ -74,6 +74,95 @@ function createPlaylist(){
 }
 
 function loadSong(){
+    if(recommendation == 0){
+        return randomSong();
+    } else {
+        return recommendedSong();
+    }
+}
+
+function getTopTracks(){
+    return new Promise(function(resolve, reject){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4){
+                if(this.status == 200) {
+                    let response = JSON.parse(xhttp.responseText); 
+                    if(response.hasOwnProperty("items")){
+                        if(response.items.length > 0){
+                            resolve({"items":response.items});
+                        } else {
+                            reject();
+                        }
+                    } else {
+                        reject();
+                    }
+                } else {
+                    reject();
+                }
+            }
+        };
+        xhttp.open("get", "https://api.spotify.com/v1/me/top/tracks?limit=10", true);
+        xhttp.setRequestHeader("Accept","application/json");
+        xhttp.setRequestHeader("Content-Type","application/json");
+        xhttp.setRequestHeader("Authorization","Bearer "+localStorage.getItem("accesstoken"));
+        xhttp.send();
+    });
+}
+
+function getTopArtists(){
+    return new Promise(function(resolve, reject){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4){
+                if(this.status == 200) {
+                    let response = JSON.parse(xhttp.responseText); 
+                    if(response.hasOwnProperty("items")){
+                        if(response.items.length > 0){
+                            resolve({"items":response.items});
+                        } else {
+                            reject();
+                        }
+                    } else {
+                        reject();
+                    }
+                } else {
+                    reject();
+                }
+            }
+        };
+        xhttp.open("get", "https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=10", true);
+        xhttp.setRequestHeader("Accept","application/json");
+        xhttp.setRequestHeader("Content-Type","application/json");
+        xhttp.setRequestHeader("Authorization","Bearer "+localStorage.getItem("accesstoken"));
+        xhttp.send();
+    });
+}
+
+function recommendedSong(){
+    return new Promise(function(resolve,reject){
+        getTopTracks().then(
+            function(dataTracks){
+                getTopArtists().then(
+                    function(dataArtists){
+                        console.log(dataArtists);
+                        reject({"displayError":true});
+                    },
+                    function(){
+                        displayInSnackbar("Spotify does not yet have enough information about your song taste");
+                        reject({"displayError":false});
+                    }
+                );
+            },
+            function(){
+                displayInSnackbar("Spotify does not yet have enough information about your song taste");
+                reject({"displayError":false});
+            }
+        );
+    });
+}
+
+function randomSong(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
@@ -82,7 +171,7 @@ function loadSong(){
                     let response = JSON.parse(xhttp.responseText); 
                     resolve({"id":response.tracks.items[0].id,"name":response.tracks.items[0].name,"preview_url":response.tracks.items[0].preview_url, "artists": response.tracks.items[0].artists, "cover":response.tracks.items[0].album.images[0].url});
                 } else {
-                    reject();
+                    reject({"displayError":true});
                 }
             }
         };
@@ -135,7 +224,9 @@ async function getValidSong(count = 0) {
                         }
                     },
                     function(data){
-                        displayInSnackbar("Spotify error");
+                        if(data.displayError){
+                            displayInSnackbar("Spotify error");
+                        }
                     }
                 );
             }
