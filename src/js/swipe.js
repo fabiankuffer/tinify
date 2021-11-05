@@ -188,3 +188,13 @@ async function initSuggestion(){
         document.getElementById("swipe-popup-all-songs").checked = true;
     }
 }
+
+function displayInSnackbar(text){
+    let snackbar = document.getElementById("snackbar");
+    snackbar.innerText = text;
+    let calcmargin = -(snackbar.offsetWidth / 2);
+    snackbar.style.marginLeft = calcmargin+"px";
+    snackbar.classList.add("showSnackbar");
+
+    setTimeout(function(){ snackbar.className = snackbar.classList.remove("showSnackbar"); }, 3000);
+}
