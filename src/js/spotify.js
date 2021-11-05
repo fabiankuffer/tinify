@@ -115,28 +115,32 @@ function addSongToPlaylist(song_id, playlist_id){
     });
 }
 
-async function getValidSong() {
-    await checkAccessToken().finally(
-        async function(){
-            await loadSong().then(
-                function(data){
-                    if(data.preview_url == null){
-                        getValidSong();
-                    } else {
-                        checkReviewed(data.id).then(
-                            function(){
-                                displaySong(data);
-                            },
-                            function(){
-                                getValidSong();
-                            }
-                        );
+async function getValidSong(count = 0) {
+    if(count < 100){
+        await checkAccessToken().finally(
+            async function(){
+                await loadSong().then(
+                    function(data){
+                        if(data.preview_url == null){
+                            getValidSong(count+1);
+                        } else {
+                            checkReviewed(data.id).then(
+                                function(){
+                                    displaySong(data);
+                                },
+                                function(){
+                                    getValidSong(count+1);
+                                }
+                            );
+                        }
+                    },
+                    function(data){
+                        displayInSnackbar("Spotify error");
                     }
-                },
-                function(data){
-                    displayInSnackbar("Spotify error");
-                }
-            );
-        }
-    );
+                );
+            }
+        );
+    } else {
+        displayInSnackbar("100 songs searched no new found");
+    }
 }
