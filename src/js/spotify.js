@@ -116,7 +116,7 @@ function addSongToPlaylist(song_id, playlist_id){
 }
 
 async function getValidSong() {
-    await checkAccessToken().then(
+    await checkAccessToken().finally(
         async function(){
             await loadSong().then(
                 function(data){
@@ -134,7 +134,7 @@ async function getValidSong() {
                     }
                 },
                 function(data){
-                    getValidSong();
+                    displayInSnackbar("Spotify error");
                 }
             );
         }

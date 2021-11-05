@@ -62,6 +62,8 @@ function logout(){
         if (this.readyState == 4){
             if(this.status == 200) {
                 window.location.href = "/";
+            } else {
+                displayInSnackbar("internal Tinify error");
             }
         }
     };
@@ -133,7 +135,6 @@ function requestAccessToken(){
                     localStorage.setItem("expireDate", response.expires);
                     resolve();
                 } else {
-                    console.log("error no new accesstoken");
                     reject();
                 }
             }
@@ -154,6 +155,11 @@ function updateRecommendation(song_type){
     }
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
+        if(this.readyState == 4){
+            if(this.status != 200){
+                displayInSnackbar("internal Tinify error");
+            }
+        }
     };
     xhttp.open("post", "/setting", true);
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");

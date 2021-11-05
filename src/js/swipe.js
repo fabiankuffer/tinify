@@ -43,7 +43,7 @@ async function initSpotifyConnection(){
     //setup to get the first song
     checkConnected().then(
         function(){
-            checkAccessToken().then(
+            checkAccessToken().finally(
                 function(){
                     getSpotifyUserID().then(
                         function(){
@@ -56,17 +56,23 @@ async function initSpotifyConnection(){
                                         function(){
                                             getValidSong();
                                         },
-                                        function(){}
+                                        function(){
+                                            displayInSnackbar("Spotify Playlist can't be created");
+                                        }
                                     );
                                 }
                             );
                         },
-                        function(){}
+                        function(){
+                            displayInSnackbar("Spotify error");
+                        }
                     );
                 }
             )
         },
-        function(){}
+        function(){
+            displayInSnackbar("internal Tinify error");
+        }
     );
 }
 
@@ -125,14 +131,14 @@ function setAudioWidget(){
 
 function dislikedSong(){
     audio_obj.pause();
-    addDislike(spotify_song_id);
+    addDislike(spotify_song_id).then(function(){},function(){displayInSnackbar("internal Tinify error");});
     getValidSong();
 }
 
 function likedSong(){
     audio_obj.pause();
-    addLike(spotify_song_id);
-    addSongToPlaylist(spotify_song_id, spotify_PlaylistID);
+    addLike(spotify_song_id).then(function(){},function(){displayInSnackbar("internal Tinify error");});
+    addSongToPlaylist(spotify_song_id, spotify_PlaylistID).then(function(){},function(){displayInSnackbar("Spotify error");});
     getValidSong();
 }
 
@@ -152,10 +158,10 @@ function audioPlayer(){
 async function checkAccessToken(){
     if(localStorage.accesstoken && localStorage.expireDate){
         if(localStorage.expireDate < Date.now()-5000){
-            await requestAccessToken();
+            await requestAccessToken().then(function(){},function(){displayInSnackbar("internal Tinify error");});
         }
     } else {
-        await requestAccessToken();
+        await requestAccessToken().then(function(){},function(){displayInSnackbar("internal Tinify error");});
     }
 }
 
@@ -171,7 +177,7 @@ const deleteAccount = (function(){
                     logout();
                 },
                 function(){
-
+                    displayInSnackbar("internal Tinify error");
                 }
             );
         }
@@ -181,7 +187,7 @@ const deleteAccount = (function(){
 async function initSuggestion(){
     document.getElementById("swipe-popup-all-songs").addEventListener("change",function(){updateRecommendation("all");});
     document.getElementById("swipe-popup-recommended-songs").addEventListener("change",function(){updateRecommendation("recommended");});
-    await loadRecommendation().then(function(){},function(){});
+    await loadRecommendation().then(function(){},function(){displayInSnackbar("internal Tinify error");});
     if(recommendation == 1){
         document.getElementById("swipe-popup-recommended-songs").checked = true;
     } else {
