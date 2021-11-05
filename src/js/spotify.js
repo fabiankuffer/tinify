@@ -56,7 +56,7 @@ function createPlaylist(){
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4){
-                if(this.status == 200) {
+                if(this.status == 200 || this.status == 201) {
                     let response = JSON.parse(xhttp.responseText); 
                     spotify_PlaylistID = response.id;
                     resolve();
@@ -100,7 +100,7 @@ function addSongToPlaylist(song_id, playlist_id){
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4){
-                if(this.status == 200) {
+                if(this.status == 200 || this.status == 201) {
                     resolve();
                 } else {
                     reject();
