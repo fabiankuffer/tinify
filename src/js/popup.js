@@ -1,3 +1,4 @@
+//init all buttons that are possible to click to open the popup and add the eventlistener to the close button
 function initPopups(){
     let popup_open = document.getElementsByClassName("popup-open");
     for (let i = 0; i < popup_open.length; i++){
@@ -10,6 +11,7 @@ function initPopups(){
     }
 }
 
+//function to display the popup
 function openPopup(){
     let popup_backgrounds = document.getElementsByClassName("popup-background");
     for (let i = 0; i < popup_backgrounds.length; i++){
@@ -17,6 +19,7 @@ function openPopup(){
     }
 }
 
+//function to close the popup
 function closePopup(){
     let popup_backgrounds = document.getElementsByClassName("popup-background");
     for (let i = 0; i < popup_backgrounds.length; i++){

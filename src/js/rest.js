@@ -1,3 +1,5 @@
+//calls the tinify-api to check if the song_id is a new song that wasn't reviewed
+//returns a promise reselove if this song isn't in the db
 function checkReviewed(song_id){
     return new Promise(function(resolve,reject){
         let xhttp = new XMLHttpRequest();
@@ -20,6 +22,8 @@ function checkReviewed(song_id){
     });
 }
 
+//calls the tinify-api to add the song-id to the dislike-db
+//return is a promise
 function addDislike(song_id){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -37,6 +41,8 @@ function addDislike(song_id){
     });
 }
 
+//calls the tinify-api to add the song-id to the liked-db
+//return is a promise
 function addLike(song_id){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -54,6 +60,7 @@ function addLike(song_id){
     });
 }
 
+//function to logout the user und destroy all session-cookies and the spotify access token in the localstorage
 function logout(){
     localStorage.removeItem("accesstoken");   
     localStorage.removeItem("expireDate");
@@ -71,6 +78,8 @@ function logout(){
     xhttp.send();
 }
 
+//calls the tinify api to check if there is an refresh token in the db -> information to check if the user has logged in into spotify
+//return is a new promise and it will display the music-cart or the login to spotify informations or an error if there was one in the login process
 function checkConnected(){
     return new Promise(function(resolve,reject){
         let spotifyLogin = document.getElementById("swipe-login-spotify");
@@ -107,6 +116,8 @@ function checkConnected(){
     });
 }
 
+//calls the tinify-api to delete the useraccount
+//returns a promise
 function deleteRequest(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -124,6 +135,9 @@ function deleteRequest(){
     });
 }
 
+//calls the tinify-api to get a new access token
+//the new token is stored in the localstorage so the client search for new music and so on
+//return a promise
 function requestAccessToken(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -144,6 +158,8 @@ function requestAccessToken(){
     });
 }
 
+//calls the tinify-api to update the user preferences
+//it also updates an internal var for spotify call so that only the right songs will be selected
 function updateRecommendation(song_type){
     let data;
     if(song_type == "all"){
@@ -170,6 +186,9 @@ function updateRecommendation(song_type){
     getValidSong();
 }
 
+//calls the tinify-api to get the user-options from the db
+//stores the information in a local var
+//return a promise
 function loadRecommendation(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();

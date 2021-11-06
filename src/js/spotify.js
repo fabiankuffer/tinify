@@ -1,3 +1,5 @@
+//calls the spotify-api to get the user-id from spotify
+//returns a promise
 function getSpotifyUserID(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -20,6 +22,9 @@ function getSpotifyUserID(){
     });
 }
 
+
+//calls the spotify-api to check the user playlists if there is one called tinify
+//returns a promise
 function checkPlaylist(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -29,6 +34,7 @@ function checkPlaylist(){
                     let response = JSON.parse(xhttp.responseText); 
                     for(let i = 0; i < response.items.length; i++){
                         if(response.items[i].name == "Tinify"){
+                            //adds the playlistid to an local var
                             spotify_PlaylistID = response.items[i].id;
                             break;
                         }
@@ -51,6 +57,8 @@ function checkPlaylist(){
     });
 }
 
+//calls the spotify-api to create a new playlist called tinify
+//returns a promise
 function createPlaylist(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -73,6 +81,7 @@ function createPlaylist(){
     });
 }
 
+//function to load a new song depends on the user preference for music recommendation
 function loadSong(){
     if(recommendation == 0){
         return randomSong();
@@ -81,6 +90,10 @@ function loadSong(){
     }
 }
 
+//calls the spotify-api to get an list of toptracks of the user
+//is necessary to get an recommended song from spotify
+//if it resolves the resolve function is called with the toptracks
+//returns a promise
 function getTopTracks(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -110,6 +123,10 @@ function getTopTracks(){
     });
 }
 
+//calls the spotify-api to get an list of topartists of the user
+//is necessary to get an recommended song from spotify
+//if it resolves the resolve function is called with the topartists
+//returns a promise
 function getTopArtists(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -139,15 +156,24 @@ function getTopArtists(){
     });
 }
 
+//calls the spotify-api to get an recommended song
+//is the last step to get a recommended song from spotify
+//if it resolves the resolve function is called with the informations of a song
+//if it rejects the reject function is called with the options to display a default message
+//return is a promise
 function recommendedSong(){
     return new Promise(function(resolve,reject){
+        //checks for toptracks
         getTopTracks().then(
             function(dataTracks){
+                //seedtrack from a random track for the recommended song call
                 let seedtrack = dataTracks.items[Math.floor(Math.random() * dataTracks.items.length)].id;
+                //checks for topartists
                 getTopArtists().then(
                     function(dataArtists){
+                        //seedartist from a random artist for the recommended song call
                         let seedArtist = dataArtists.items[Math.floor(Math.random() * dataArtists.items.length)].id;
-                        //create genre string
+                        //create genre string for the recommended song call
                         let genres = "";
                         for(let i = 0; i < 3; i++){
                             let genreArray = dataArtists.items[Math.floor(Math.random() * dataArtists.items.length)].genres;
@@ -160,6 +186,7 @@ function recommendedSong(){
                         }
                         genres = encodeURI(genres);
 
+                        //call for a recommended song
                         let xhttp = new XMLHttpRequest();
                         xhttp.onreadystatechange = function() {
                             if (this.readyState == 4){
@@ -177,6 +204,7 @@ function recommendedSong(){
                         xhttp.setRequestHeader("Authorization","Bearer "+localStorage.getItem("accesstoken"));
                         xhttp.send();
                     },
+                    //error messages for the user
                     function(){
                         displayInSnackbar("Spotify does not yet have enough information about your song taste");
                         reject({"displayError":false});
@@ -191,6 +219,10 @@ function recommendedSong(){
     });
 }
 
+//calls the spotify-api to get a random song
+//if it resolves the resolve function is called with the informations of a song
+//if it rejects the reject function is called with the options to display a default message
+//return is a promise
 function randomSong(){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -204,6 +236,7 @@ function randomSong(){
                 }
             }
         };
+        //random offset from the search sesults
         const randomOffset = Math.floor(Math.random() * 1000);
         xhttp.open("get", "https://api.spotify.com/v1/search?type=track&limit=1&offset="+randomOffset+"&q="+getRandomSearch(), true);
         xhttp.setRequestHeader("Accept","application/json");
@@ -213,6 +246,8 @@ function randomSong(){
     });
 }
 
+//calls the spotify-api to add a song to the playlist tinify
+//returns a promise
 function addSongToPlaylist(song_id, playlist_id){
     return new Promise(function(resolve, reject){
         let xhttp = new XMLHttpRequest();
@@ -233,20 +268,25 @@ function addSongToPlaylist(song_id, playlist_id){
     });
 }
 
+//this functions tries 100 times if there is a song from spotify that wasn't reviewed by the user and has a preview url
 async function getValidSong(count = 0) {
     if(count < 100){
+        //call this function to get a new accesstoken if the current one is to old
         await checkAccessToken().finally(
             async function(){
                 await loadSong().then(
                     function(data){
                         if(data.preview_url == null){
+                            //recursive call this function for a new song if there was no preview url
                             getValidSong(count+1);
                         } else {
                             checkReviewed(data.id).then(
                                 function(){
+                                    //if there was an succes display the new song
                                     displaySong(data);
                                 },
                                 function(){
+                                    //recursive call this function for a new song if there was no preview url
                                     getValidSong(count+1);
                                 }
                             );

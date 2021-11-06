@@ -13,9 +13,11 @@
         <link rel="stylesheet" href="css/swipe.css">
     </head>
     <body>
+        <!--container for the snackbar and the text-->
         <div id="snackbar-wrapper">
             <div id="snackbar"></div>
         </div>
+        <!--all container and elements for the popup if you click the account button on the upper right side of the view-->
         <div id="swipe-popup-settings-background" class="popup-background">
             <div id="swipe-popup-settings-container">
                 <span id="swipe-popup-close" class="popup-close">&times;</span>
@@ -33,12 +35,16 @@
                 <div id="swipe-popup-delete-warning">A deleted Tinify account can't be restored. If you really want to delete your account click the button again.</div>
             </div>
         </div>
+        <!--the container for the mainview-->
         <div id="swipe-main-container">
+            <!--the element for the accout button on the upper right side of the view-->
             <div id="swipe-account-icon" class="popup-open"></div>
+            <!--the message if the user never signed in into spotify-->
             <div id="swipe-login-spotify">
                 You need to sign in to Spotify to access music and to add music you like to the Tinity playlist.
                 <button id="spotify-login-button">Sign-In Spotify</button>
             </div>
+            <!--the music cart-->
             <div id="swipe-cart-container">
                 <div id="swipe-cart-image-container">
                     <div id="swipe-music-play-option"></div>

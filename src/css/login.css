@@ -1,7 +1,11 @@
+/*
+this file includes all designs for the login view
+*/
 @import 'damion.css';
 @import 'montserrat.css';
 @import 'general.css';
 
+/*the maincontainer to align all the elements in the right place*/
 #login-main-container {
     width: 1000px;
     margin-left: calc((100% - 1000px) / 2);
@@ -27,6 +31,7 @@
     margin: 0 0 20px 0;
 }
 
+/*some general stuff for the inputs and buttons*/
 input {
     display: block;
     padding: 10px 7px;
@@ -43,13 +48,6 @@ input:focus {
 
 input::placeholder {
     color: rgb(120,120,120);
-}
-
-#login-form-main-container hr {
-    border: none;
-    border-top: 1px solid rgb(180,180,180);
-    margin: 20px 0;
-    width: 100%;
 }
 
 button {
@@ -72,12 +70,20 @@ button:active {
     color: rgb(0,0,0);
 }
 
+/*next section is for the right login container*/
 #login-form-error-message {
     color: rgb(175, 31, 31);
     width: 100%;
     text-align: center;
     margin: 10px 0 0 0;
     font-size: 0.9em;
+}
+
+#login-form-main-container hr {
+    border: none;
+    border-top: 1px solid rgb(180,180,180);
+    margin: 20px 0;
+    width: 100%;
 }
 
 #login-form-main-container {
@@ -95,6 +101,7 @@ button:active {
     height: 0;
 }
 
+/*next section is all about the popup*/
 #login-popup-sign-in-background {
     background-color: rgba(245,245,245,0.9);
     width: 100vw;
@@ -144,6 +151,7 @@ button:active {
     margin-bottom: 5px;
 }
 
+/*the specific parts that should change in the dark design*/
 @media (prefers-color-scheme: dark) {
     input:focus {
         border-bottom: 2px solid rgb(9, 86, 118);
@@ -196,6 +204,8 @@ button:active {
     }
 }
 
+
+/*some design for the different display sizes*/
 @media screen and (max-width: 1000px) {
     #login-main-container {
       width: 100%;

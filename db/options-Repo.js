@@ -1,8 +1,10 @@
+//stores the suggestion option of a specific user
 class optionsRepo {
     constructor(dao) {
       this.dao = dao;
     }
   
+    //creates the necessary table if not exists
     createTable() {
       //suggestion:0 => random song
       //suggestion:1 => recommended song
@@ -15,6 +17,7 @@ class optionsRepo {
       return this.dao.run(sql);
     }
 
+    //creates an entry
     create(user_id, suggestions) {
         return this.dao.run(
           `INSERT INTO options (user_id, suggestions)
@@ -22,6 +25,7 @@ class optionsRepo {
           [user_id, suggestions]);
     }
 
+    //updates an entry
     update(user_id, suggestions) {
         return this.dao.run(
           `UPDATE options
@@ -31,6 +35,7 @@ class optionsRepo {
         );
     }
 
+    //deletes the entry of a user
     delete(user_id) {
         return this.dao.run(
           `DELETE FROM options WHERE user_id = ?`,
@@ -38,6 +43,7 @@ class optionsRepo {
         );
     }
 
+    //get the useroptions for the specific user
     getByUser(user) {
         return this.dao.get(
           `SELECT * FROM options WHERE user_id = ?`,
