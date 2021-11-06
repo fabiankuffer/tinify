@@ -272,6 +272,7 @@ button:active {
     border-radius: 5px;
     font-size: 0.9em;
     cursor: pointer;
+    text-align: center;
 }
 
 .swipe-popup-label:hover {
@@ -301,12 +302,21 @@ button:active {
     background-color: rgb(199, 15, 39);
 }
 
+#snackbar-wrapper {
+    position: fixed;
+    left: 0;
+    bottom: 5px;
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    z-index: 4;
+}
+
 #snackbar {
     min-width: 250px;
-    position: fixed;
-    bottom: 5px;
     background-color: rgba(150,150,150,0.9);
-    left: 50%;
     visibility: hidden;
     padding: 16px;
     z-index: 2;
