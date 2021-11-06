@@ -47,7 +47,8 @@ userTable.createTable()
       console.log('Error: ')
       console.log(JSON.stringify(err))});
 
-//main file
+//main file --> is the login view
+//if there is a session redirect to the music view
 app.get('/', function (req, res){
     if(req.session.loggedIn){
         req.session.touch();
@@ -59,7 +60,8 @@ app.get('/', function (req, res){
     }
 });
 
-//swipe file
+//swipe file --> is the music view
+//redirect to login view if there is no session
 app.get('/swipe', function (req, res){
     if(req.session.loggedIn){
         req.session.touch();
@@ -112,12 +114,15 @@ app.post("/login", function(req,res){
         userTable.getByMail(req.body.mail).then(
             function(data){
                 if(data){
+                    //check if user is logged because of to much login attempts
                     loginattemptTable.getCountYoungerThan(data.id,Date.now()-300000).then(
                         function(dataattempts){
                             if(dataattempts.count > 5){
                                 res.status(403).json({"message":"to many failed attempts"});
                                 loginattemptTable.deleteOlderThan(data.id,Date.now()-300000); //5min
                             } else {
+                                //if the user isn't logged check the password
+                                //but only send as return a internal error message so nobody can search for email adresses that are stored in the db by dummy requests
                                 bcrypt.compare(req.body.password, data.password_hash, function(err, result) {
                                     if(err){
                                         res.status(500).json({"message":"internal error"});
@@ -153,6 +158,8 @@ app.post("/login", function(req,res){
 });
 
 
+//api call signup
+//creates an user and returns a new session-cookie
 app.post("/signup", function(req,res){
     //neccessary parameter: mail, password
     //password min length is 4 chars
@@ -161,12 +168,15 @@ app.post("/signup", function(req,res){
         const saltRounds = 10;
         const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
+        //check the email address if it's a legal format
         if(emailRegexp.test(req.body.mail)){
+            //check if the password has more than 4 chars
             if(req.body.password.length > 4){
                 bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
                     if(err){
                         res.status(500).json({"message":"internal error"});
                     } else {
+                        //create the user and return a new session cookie
                         userTable.create(hash, req.body.mail).then(
                             function(data){
                                 req.session.loggedIn = true;
@@ -191,6 +201,8 @@ app.post("/signup", function(req,res){
     }
 });
 
+//api call logout
+//destroys the session cookie
 app.post("/logout", function(req,res){
     req.session.destroy((err)=>{
         if(err){
@@ -201,6 +213,9 @@ app.post("/logout", function(req,res){
     });
 });
 
+//api call connected
+//checks if the user has a refresh token
+//if not send back a url to the spotify login to login into spotify
 app.post("/user/connected", function(req,res){
     //only session cookie is neccessary
     if(req.session.loggedIn){
@@ -226,6 +241,7 @@ app.post("/user/connected", function(req,res){
     }
 });
 
+//this api call is only used by the spotify api to set the refresh token
 app.get("/set/refreshtoken", function(req,res){
     //only session cookie is neccessary & only works if response from a spotify login attempt
     if(req.session.loggedIn){
@@ -237,6 +253,7 @@ app.get("/set/refreshtoken", function(req,res){
             const DOMAIN = process.env.DOMAIN || "localhost";
             const PROTOCOL = process.env.PROTOCOL || "http";
 
+            //spotify returns only a auth_token, so ask for a refresh token with the auth_token
             let data = `${encodeURI('grant_type')}=${encodeURI('authorization_code')}&${encodeURI('code')}=${encodeURI(req.query.code)}&${encodeURI('redirect_uri')}=${encodeURI(PROTOCOL+"://"+DOMAIN+":"+EXTERNALPORT+"/set/refreshtoken")}`;
             let appidentification = btoa(CLIENTID+":"+CLIENTSECRET);
             const options = {
@@ -249,6 +266,7 @@ app.get("/set/refreshtoken", function(req,res){
                 'Content-Type': 'application/x-www-form-urlencoded'
             }};
 
+            //thats the way to get the data from the call and and the refresh token to the db
             new Promise(function(resolve, reject) {
                 const access_refresh = https.request(options, res_acc => {
                     let responseBody = '';
@@ -269,6 +287,7 @@ app.get("/set/refreshtoken", function(req,res){
                     reject();
                 });
             }).then(
+                //always go back to the music view after the redirect to spotify an back
                 function(){
                     res.redirect("/swipe");
                 },
@@ -284,6 +303,8 @@ app.get("/set/refreshtoken", function(req,res){
     }
 });
 
+//api call for a new accesstoken
+//backend is in charge of it because this has to be done with a clientid & secret that nobody should know
 app.get("/get/accesstoken", function(req,res){
     //return data is a json object with token and time to live
     if(req.session.loggedIn){
@@ -293,6 +314,7 @@ app.get("/get/accesstoken", function(req,res){
         refreshTable.getByUser(req.session.user_id).then(
             function(datarefreshResponse){
                 if(datarefreshResponse){
+                    //request the new access token
                     let data = `${encodeURI('grant_type')}=${encodeURI('refresh_token')}&${encodeURI('refresh_token')}=${encodeURI(datarefreshResponse.refresh_token)}`;
                     let appidentification = btoa(CLIENTID+":"+CLIENTSECRET);
                     const options = {
@@ -305,6 +327,7 @@ app.get("/get/accesstoken", function(req,res){
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }};
             
+                    //get the spotify stream of data and parse it
                     new Promise(function(resolve, reject) {
                         const access_refresh = https.request(options, res_acc => {
                             let responseBody = '';
@@ -325,6 +348,7 @@ app.get("/get/accesstoken", function(req,res){
                         });
                     }).then(
                         function(data){
+                            //return the access token to the user and if there was a new refresh token replace the old one in the db
                             let expireDate = Date.now() + data.expires_in * 1000;
                             if(data.hasOwnProperty("refresh_token")){
                                 refreshTable.update(req.session.user_id,data.refresh_token);
@@ -348,6 +372,8 @@ app.get("/get/accesstoken", function(req,res){
     }
 });
 
+//api call to dislike a song and add it to the db
+//in the url add the song-id
 app.post("/dislike/:id", function(req,res){
     if(req.session.loggedIn){
         if(req.params.id){
@@ -367,6 +393,8 @@ app.post("/dislike/:id", function(req,res){
     }
 });
 
+//api call to lika a song and add it to the db
+//in the url add the song-id
 app.post("/like/:id", function(req, res){
     if(req.session.loggedIn){
         if(req.params.id){
@@ -386,15 +414,20 @@ app.post("/like/:id", function(req, res){
     }
 });
 
+//api call to check if the song was review by a user
+//in the url add the song-id
 app.get("/reviewed/:id", function(req,res){
     if(req.session.loggedIn){
         if(req.params.id){
+            //check if the song is in the liked table
             likedTable.getByUserAndSong(req.session.user_id, req.params.id).then(
                 function(data){
                     if(data.count == 0){
+                        //check if the song is in the disliked table
                         dislikedTable.getByUserAndSong(req.session.user_id, req.params.id).then(
                             function(data2){
                                 if(data2.count == 0){
+                                    //if it isn't in both tables then it's a new song
                                     res.status(200).json({"reviewed":false});
                                 } else {
                                     res.status(200).json({"reviewed":true});
@@ -420,18 +453,25 @@ app.get("/reviewed/:id", function(req,res){
     }
 });
 
+//api call to delete a user accout
 app.post("/delete", function(req,res){
     if(req.session.loggedIn){
+        //first delete all liked songs
         likedTable.delete(req.session.user_id).then(
             function(){
+                //second delete all disliked songs
                 dislikedTable.delete(req.session.user_id).then(
                     function(){
+                        //third delete all usersettings
                         optionsTable.delete(req.session.user_id).then(
                             function(){
+                                //forth delete the spotify refresh token
                                 refreshTable.delete(req.session.user_id).then(
                                     function(){
+                                        //fifth delete all login attempts
                                         loginattemptTable.deleteOlderThan(req.session.user_id,Date.now()).then(
                                             function(){
+                                                //sixth delete the user entry
                                                 userTable.delete(req.session.user_id).then(
                                                     function(){
                                                         res.status(200).json({"message":"successful data deleted"});
@@ -470,6 +510,7 @@ app.post("/delete", function(req,res){
     }
 });
 
+//api call to return the settings to the caller
 app.get("/setting", function(req, res){
     if(req.session.loggedIn){
         optionsTable.getByUser(req.session.user_id).then(
@@ -478,6 +519,7 @@ app.get("/setting", function(req, res){
                     if(data.hasOwnProperty("suggestions")){
                         res.status(200).json({"suggestions":data.suggestions});
                     } else {
+                        //if there is no entry just create a default entry
                         optionsTable.create(req.session.user_id,0);
                         res.status(200).json({"suggestions":0});
                     }
@@ -495,6 +537,7 @@ app.get("/setting", function(req, res){
     }
 });
 
+//api call to update the usersettings
 app.post("/setting", function(req, res){
     if(req.session.loggedIn){
         if(req.body.suggestion == "recommended"){
@@ -507,6 +550,7 @@ app.post("/setting", function(req, res){
                 }
             );
         } else if (req.body.suggestion){
+            //if the data isn't recommended just add the default option
             optionsTable.update(req.session.user_id,0).then(
                 function(){
                     res.status(200).json({"suggestions":0});
