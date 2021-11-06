@@ -83,7 +83,6 @@ async function initSpotifyConnection(){
             )
         },
         function(){
-            displayInSnackbar("internal Tinify error");
         }
     );
 }
