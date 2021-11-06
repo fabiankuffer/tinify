@@ -30,7 +30,7 @@ Spotify tokens are not provided as they are assigned to a developer account and 
 6. click the button **"EDIT SETTINGS"**
 7. In the section ***"Redirect URIs"*** add your address where Spotify should jump back after a user login.
 The address is structured like this: `<PROTOCOL>://<DOMAIN>:<EXTERNALPORT>/set/refreshtoken`
-PROTOCOL, DOMAIN, EXTERNALPORT are the ENV vars that are set when the server is started..
+PROTOCOL, DOMAIN, EXTERNALPORT are the ENV vars that are set when the server is started.
 8. save the settings
 9. in the app view the client-id and the client-secret can be read out
 10. Mostly not necessary. Since the generated Spotify app is only in developer-mode, users have to be added manually to use the website. For this, the user must be added under **"USER AND ACCESS"**. The account that created the Spotify app doesn't need to be added.
