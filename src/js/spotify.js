@@ -143,10 +143,39 @@ function recommendedSong(){
     return new Promise(function(resolve,reject){
         getTopTracks().then(
             function(dataTracks){
+                let seedtrack = dataTracks.items[Math.floor(Math.random() * dataTracks.items.length)].id;
                 getTopArtists().then(
                     function(dataArtists){
-                        console.log(dataArtists);
-                        reject({"displayError":true});
+                        let seedArtist = dataArtists.items[Math.floor(Math.random() * dataArtists.items.length)].id;
+                        //create genre string
+                        let genres = "";
+                        for(let i = 0; i < 3; i++){
+                            let genreArray = dataArtists.items[Math.floor(Math.random() * dataArtists.items.length)].genres;
+                            if(genreArray.length > 0){
+                                genres = genres + genreArray[Math.floor(Math.random() * genreArray.length)];
+                                if(i != 2){
+                                    genres = genres + ",";
+                                }
+                            }
+                        }
+                        genres = encodeURI(genres);
+
+                        let xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState == 4){
+                                if(this.status == 200) {
+                                    let response = JSON.parse(xhttp.responseText); 
+                                    resolve({"id":response.tracks[0].id,"name":response.tracks[0].name,"preview_url":response.tracks[0].preview_url, "artists": response.tracks[0].artists, "cover":response.tracks[0].album.images[0].url});
+                                } else {
+                                    reject({"displayError":true});
+                                }
+                            }
+                        };
+                        xhttp.open("get", "https://api.spotify.com/v1/recommendations?limit=25&seed_artists="+encodeURI(seedArtist)+"&seed_genres="+genres+"&seed_tracks="+encodeURI(seedtrack), true);
+                        xhttp.setRequestHeader("Accept","application/json");
+                        xhttp.setRequestHeader("Content-Type","application/json");
+                        xhttp.setRequestHeader("Authorization","Bearer "+localStorage.getItem("accesstoken"));
+                        xhttp.send();
                     },
                     function(){
                         displayInSnackbar("Spotify does not yet have enough information about your song taste");
