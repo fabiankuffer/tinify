@@ -78,7 +78,7 @@ The Docker image will create a volume in addition to the container to persistent
 ![erm](db/erd.png)
 
 ## Elements integrated
-- own CSS
+- own Webpage
 - Spotify login and music suggestions
 - Login via REST-API on nodejs with sqlite
 - Webapp executable in Docker containers
